@@ -49,11 +49,12 @@ fun TimetableScreen(modifier: Modifier = Modifier, timetableViewModel: Timetable
                 state = pullToRefreshState,
                 isRefreshing = isRefreshing,
                 onRefresh = {
-                    isRefreshing = true
                     coroutineScope.launch {
+                        isRefreshing = true
                         timetableViewModel.updateTimetable()
                         timetableViewModel.getTimetableForToday()
                         isRefreshing = false
+                        pullToRefreshState.animateToHidden()
                     }
                 }
             ) {
@@ -70,6 +71,4 @@ fun TimetableScreen(modifier: Modifier = Modifier, timetableViewModel: Timetable
             }
         }
     }
-
-
 }
