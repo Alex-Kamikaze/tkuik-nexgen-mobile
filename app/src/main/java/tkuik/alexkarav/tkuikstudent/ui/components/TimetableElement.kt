@@ -36,7 +36,7 @@ fun TimetableElement(pairNum: Int, pairName: String, cabinet: String, teacherNam
             .padding(start = 10.dp, top = 10.dp), verticalArrangement = Arrangement.SpaceAround) {
             Text("$pairNum пара", fontWeight = FontWeight.Black, fontSize = 24.sp, modifier = Modifier.padding(top = 10.dp, bottom = 10.dp))
             Text(pairName, fontSize = 18.sp, fontWeight = FontWeight.Medium, modifier = Modifier.padding(top = 10.dp, bottom = 10.dp))
-            Text("Преподаватель: $teacherName", fontSize = 18.sp, fontWeight = FontWeight.Medium, modifier = Modifier.padding(top = 10.dp))
+            Text("Преподаватель: $teacherName", fontSize = 18.sp, fontWeight = FontWeight.Medium, modifier = Modifier.padding(top = 10.dp, bottom = 10.dp))
             Text("Кабинет: $cabinet", fontSize = 18.sp, fontWeight = FontWeight.Medium, modifier = Modifier.padding(top = 10.dp, bottom = 10.dp))
         }
     }

@@ -18,7 +18,7 @@ class MainViewModel @Inject constructor(private val repo: TimetableRepositoryImp
     private val _showBottomBar = MutableStateFlow(false)
     val showBottomBar = _showBottomBar.asStateFlow()
 
-    private val _skipAuthorization = MutableStateFlow(false)
+    private val _skipAuthorization = MutableStateFlow(true)
     val skipAuthorization = _skipAuthorization.asStateFlow()
 
     init {
@@ -28,12 +28,15 @@ class MainViewModel @Inject constructor(private val repo: TimetableRepositoryImp
             val group = repo.getUserGroup()
             val authRequired = token.isNotBlank() && token.isNotEmpty() && group != 0
             _skipAuthorization.value = authRequired
-            _showBottomBar.value = authRequired
+            _showBottomBar.value = !authRequired
             _splashReady.value = true
         }
     }
 
+    @Deprecated(message = "Используйте setBottomBarVisibility для большей гибкости", replaceWith = ReplaceWith("setBottomBarVisibility", "mainViewModel.setBottomBarVisibility()"))
     fun toggleBottomBarVisibility() {
         _showBottomBar.value = !_showBottomBar.value
     }
+
+    fun setBottomBarVisibility(value: Boolean) { _showBottomBar.value = value }
 }

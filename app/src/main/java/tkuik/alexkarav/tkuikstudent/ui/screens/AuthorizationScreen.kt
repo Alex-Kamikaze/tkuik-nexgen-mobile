@@ -49,13 +49,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import tkuik.alexkarav.tkuikstudent.R
 import tkuik.alexkarav.tkuikstudent.data.remote.models.GroupRemoteModel
+import tkuik.alexkarav.tkuikstudent.ui.components.ErrorScreen
 import tkuik.alexkarav.tkuikstudent.utils.UIState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AuthorizationScreen(modifier: Modifier = Modifier, groupList: UIState, onAuthButtonPress: (String, String, Int) -> Unit, onRetry: () -> Unit) {
     var login by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("")}
+    var password by remember { mutableStateOf("") }
     var expanded by remember { mutableStateOf(false) }
     var chosenGroup by remember { mutableIntStateOf(0) }
 
@@ -67,17 +68,7 @@ fun AuthorizationScreen(modifier: Modifier = Modifier, groupList: UIState, onAut
         }
 
         is UIState.Error -> {
-            Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
-                Icon(imageVector = Icons.Outlined.Warning, contentDescription = null, modifier = Modifier.size(120.dp), tint = Color.Red)
-                Spacer(modifier = Modifier.height(10.dp))
-                Text("Произошла ошибка при загрузке данных. Проверьте подключение к интернету и попробуйте позже", fontWeight = FontWeight.Bold, fontSize = 16.sp, textAlign = TextAlign.Center)
-                Spacer(modifier = Modifier.height(10.dp))
-                OutlinedButton(onClick = {
-                    onRetry()
-                }, modifier = Modifier.width(200.dp), shape = RoundedCornerShape(5.dp)) {
-                    Text("Повторить")
-                }
-            }
+            ErrorScreen(onRetry)
         }
 
         is UIState.Success<*> -> {
