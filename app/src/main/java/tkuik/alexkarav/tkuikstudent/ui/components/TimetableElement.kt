@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.sp
 import tkuik.alexkarav.tkuikstudent.domain.models.TimetableModel
 
 @Composable
-fun TimetableElement(pairNum: Int, pairName: String, cabinet: String) {
+fun TimetableElement(pairNum: Int, pairName: String, cabinet: String, teacherName: String) {
     Card(modifier = Modifier
         .fillMaxWidth()
         .padding(start = 24.dp, end = 24.dp, top = 15.dp)
@@ -36,17 +36,8 @@ fun TimetableElement(pairNum: Int, pairName: String, cabinet: String) {
             .padding(start = 10.dp, top = 10.dp), verticalArrangement = Arrangement.SpaceAround) {
             Text("$pairNum пара", fontWeight = FontWeight.Black, fontSize = 24.sp, modifier = Modifier.padding(top = 10.dp, bottom = 10.dp))
             Text(pairName, fontSize = 18.sp, fontWeight = FontWeight.Medium, modifier = Modifier.padding(top = 10.dp, bottom = 10.dp))
+            Text("Преподаватель: $teacherName", fontSize = 18.sp, fontWeight = FontWeight.Medium, modifier = Modifier.padding(top = 10.dp))
             Text("Кабинет: $cabinet", fontSize = 18.sp, fontWeight = FontWeight.Medium, modifier = Modifier.padding(top = 10.dp, bottom = 10.dp))
         }
-    }
-}
-
-@Preview
-@Composable
-fun TimetableList() {
-    Column(modifier = Modifier.fillMaxSize()) {
-        TimetableElement(pairNum = 1, pairName = "Иностранный язык в профессиональной деятельности", cabinet = "507")
-        TimetableElement(pairNum = 2, pairName = "Разработка программных модулей", cabinet = "305")
-        TimetableElement(pairNum = 3, pairName = "Численные методы", cabinet = "610")
     }
 }

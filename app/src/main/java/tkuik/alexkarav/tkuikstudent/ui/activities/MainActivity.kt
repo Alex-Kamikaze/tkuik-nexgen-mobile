@@ -4,8 +4,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -27,8 +25,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
@@ -46,6 +42,7 @@ import tkuik.alexkarav.tkuikstudent.ui.screens.AuthorizationScreen
 import tkuik.alexkarav.tkuikstudent.ui.screens.DocumentOrderingScreen
 import tkuik.alexkarav.tkuikstudent.ui.screens.TimetableScreen
 import tkuik.alexkarav.tkuikstudent.ui.theme.TkuikStudentTheme
+import tkuik.alexkarav.tkuikstudent.utils.UIState
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -136,14 +133,15 @@ class MainActivity : ComponentActivity() {
                                 val authorized by authViewModel.authorized.collectAsState()
                                 val groupList by authViewModel.groupList.collectAsState()
 
+                                val onRetry = {
+                                    authViewModel.loadGroupList()
+                                }
                                 LaunchedEffect(Unit) {
-                                    if (groupList.isEmpty()) {
-                                        authViewModel.loadGroupList()
-                                    }
+                                    authViewModel.loadGroupList()
                                 }
 
                                 LaunchedEffect(authorized) {
-                                    if (authorized) {
+                                    if (authorized is UIState.Success<*>) {
                                         mainViewModel.toggleBottomBarVisibility()
                                         navController.navigate("timetable") {
                                             popUpTo("auth") { inclusive = true }
@@ -151,13 +149,12 @@ class MainActivity : ComponentActivity() {
                                     }
                                 }
 
-                                if (groupList.isNotEmpty()) {
-                                    AuthorizationScreen(
-                                        modifier = Modifier.padding(paddingValues),
-                                        groupList,
-                                        onAuthButtonPress
-                                    )
-                                }
+                                AuthorizationScreen(
+                                    Modifier.padding(paddingValues),
+                                    groupList,
+                                    onAuthButtonPress,
+                                    onRetry
+                                )
                             }
                             composable("timetable") {
                                 TimetableScreen(Modifier, timetableViewModel)
