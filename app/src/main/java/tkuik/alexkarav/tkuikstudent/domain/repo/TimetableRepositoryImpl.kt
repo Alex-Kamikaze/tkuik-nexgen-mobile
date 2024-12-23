@@ -5,6 +5,7 @@ import androidx.compose.runtime.key
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import tkuik.alexkarav.tkuikstudent.data.local.datastore.KeyStore
+import tkuik.alexkarav.tkuikstudent.data.local.datastore.WidgetInfoModel
 import tkuik.alexkarav.tkuikstudent.data.local.db.TimetableDao
 import tkuik.alexkarav.tkuikstudent.data.local.db.TimetableDatabase
 import tkuik.alexkarav.tkuikstudent.data.local.db.models.TimetableLocalModel
@@ -97,14 +98,14 @@ class TimetableRepositoryImpl @Inject constructor(private val db: TimetableDatab
 
     // TODO: доделать для работы с экраном профиля
     override suspend fun setProfileScreenInfo(login: String, groupName: String) {}
-    override suspend fun setCurrentPairAndCabinetForWidget() {
+    override suspend fun setCurrentPairAndCabinetForWidget(): WidgetInfoModel? {
         Log.d("API", "Обновление текущей пары и кабинета")
         val timetableForToday = getTimetableLocally()
         timetableForToday.forEach { lesson ->
             if(checkCurrentTimeInInterval(lesson.pairBeginTime, lesson.pairEndTime)) {
-                Log.d("API", "Найдено совпадение, идет добавление в DataStore")
-                keystore.setCurrentPairInfo(lesson.subjectName, lesson.cabinetNumber)
+                return WidgetInfoModel(currentPair = lesson.subjectName, currentCabinet = lesson.cabinetNumber)
             }
         }
+        return null
     }
 }

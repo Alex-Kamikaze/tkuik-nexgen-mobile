@@ -2,12 +2,16 @@ package tkuik.alexkarav.tkuikstudent.domain.workers
 
 import android.content.Context
 import android.util.Log
+import androidx.glance.appwidget.GlanceAppWidgetManager
+import androidx.glance.appwidget.state.updateAppWidgetState
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import tkuik.alexkarav.tkuikstudent.domain.repo.TimetableRepositoryImpl
+import tkuik.alexkarav.tkuikstudent.domain.widgets.TimetableWidget
+import tkuik.alexkarav.tkuikstudent.utils.Timetable
 import javax.inject.Inject
 
 @HiltWorker
@@ -18,7 +22,15 @@ class TimetableWidgetUpdateWorker @AssistedInject constructor(
 ): CoroutineWorker(appContext, workerParameters)  {
     override suspend fun doWork(): Result {
         try {
-            repo.setCurrentPairAndCabinetForWidget()
+            val widgetInfo = repo.setCurrentPairAndCabinetForWidget()
+            GlanceAppWidgetManager(context = applicationContext)
+                .getGlanceIds(TimetableWidget::class.java)
+                .forEach { glanceId ->
+                    updateAppWidgetState(applicationContext, glanceId) { prefs ->
+                        prefs[TimetableWidget.currentLessonKey] = widgetInfo?.currentPair ?: "Не найдено"
+                        prefs[TimetableWidget.currentCabinetKey] = widgetInfo?.currentCabinet ?: "Не найдено"
+                    }
+                }
             return Result.success()
         }
         catch(e: Exception) {

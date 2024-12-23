@@ -47,12 +47,14 @@ class TimetableApplication: Application(), Configuration.Provider {
                 timetableUpdateWorkerRequest
         )
 
-        val timetableWidgetUpdateWorkerRequest = OneTimeWorkRequestBuilder<TimetableWidgetUpdateWorker>().build()
+        val timetableWidgetUpdateWorkerRequest = PeriodicWorkRequestBuilder<TimetableWidgetUpdateWorker>(
+            20, TimeUnit.MINUTES
+        ).build()
 
-        WorkManager.getInstance(this).enqueue(
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+            "updateTimetableWidget",
+            ExistingPeriodicWorkPolicy.KEEP,
             timetableWidgetUpdateWorkerRequest
         )
     }
-
-
 }

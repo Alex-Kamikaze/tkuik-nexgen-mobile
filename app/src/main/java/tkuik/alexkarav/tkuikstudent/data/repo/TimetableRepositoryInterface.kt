@@ -1,6 +1,7 @@
 package tkuik.alexkarav.tkuikstudent.data.repo
 
 import kotlinx.coroutines.flow.Flow
+import tkuik.alexkarav.tkuikstudent.data.local.datastore.WidgetInfoModel
 import tkuik.alexkarav.tkuikstudent.data.local.db.models.TimetableLocalModel
 import tkuik.alexkarav.tkuikstudent.data.remote.models.GroupRemoteModel
 
@@ -20,6 +21,5 @@ interface TimetableRepositoryInterface {
     suspend fun getTimetableForDay(dayOfWeek: Int): List<TimetableLocalModel>
 
     suspend fun setProfileScreenInfo(login: String, groupName: String)
-
-    suspend fun setCurrentPairAndCabinetForWidget()
+    suspend fun setCurrentPairAndCabinetForWidget(): WidgetInfoModel?
 }

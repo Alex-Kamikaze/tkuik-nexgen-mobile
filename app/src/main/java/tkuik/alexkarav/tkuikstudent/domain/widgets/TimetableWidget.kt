@@ -39,10 +39,10 @@ import tkuik.alexkarav.tkuikstudent.ui.activities.MainActivity
 
 class TimetableWidget: GlanceAppWidget() {
 
-    override var stateDefinition: GlanceStateDefinition<*> = PreferencesGlanceStateDefinition
-
-    private val currentLessonKey = stringPreferencesKey("current_pair")
-    private val currentCabinetKey = stringPreferencesKey("current_cabinet")
+    companion object {
+        val currentLessonKey = stringPreferencesKey("current_pair")
+        val currentCabinetKey = stringPreferencesKey("current_cabinet")
+    }
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         provideContent {
@@ -52,7 +52,8 @@ class TimetableWidget: GlanceAppWidget() {
 
     @Composable
     fun Content() {
-        val preferences = currentState<Preferences>()
+        val currentLesson = currentState(key = currentLessonKey) ?: "Не найдено"
+        val currentCabinet = currentState(key = currentCabinetKey) ?: "Не найдено"
 
         GlanceTheme {
             Scaffold(
@@ -61,8 +62,8 @@ class TimetableWidget: GlanceAppWidget() {
                 backgroundColor = GlanceTheme.colors.widgetBackground
             ) {
                 Column(modifier = GlanceModifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalAlignment = Alignment.CenterVertically) {
-                    Text("Текущая пара: ${preferences[currentLessonKey]}", style = TextStyle(color = GlanceTheme.colors.onSurface))
-                    Text("Кабинет: ${preferences[currentCabinetKey]}", style = TextStyle(color = GlanceTheme.colors.onSurface))
+                    Text("Текущая пара: $currentLesson", style = TextStyle(color = GlanceTheme.colors.onSurface))
+                    Text("Кабинет: $currentCabinet", style = TextStyle(color = GlanceTheme.colors.onSurface))
                 }
             }
         }
