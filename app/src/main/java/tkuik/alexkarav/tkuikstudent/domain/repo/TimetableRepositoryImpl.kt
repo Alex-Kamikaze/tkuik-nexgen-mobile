@@ -12,7 +12,9 @@ import tkuik.alexkarav.tkuikstudent.data.remote.TimetableApi
 import tkuik.alexkarav.tkuikstudent.data.remote.models.AuthRequestModel
 import tkuik.alexkarav.tkuikstudent.data.remote.models.GroupRemoteModel
 import tkuik.alexkarav.tkuikstudent.data.repo.TimetableRepositoryInterface
+import tkuik.alexkarav.tkuikstudent.utils.checkCurrentTimeInInterval
 import tkuik.alexkarav.tkuikstudent.utils.getCurrentDayOfWeek
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 class TimetableRepositoryImpl @Inject constructor(private val db: TimetableDatabase, private val api: TimetableApi, private val keystore: KeyStore): TimetableRepositoryInterface {
@@ -88,5 +90,21 @@ class TimetableRepositoryImpl @Inject constructor(private val db: TimetableDatab
         return timetableDao.getTimetableForDay(dayOfWeek)
     }
 
+    suspend fun getTimetableLocally(): List<TimetableLocalModel> {
+        val currentDayOfWeek = getCurrentDayOfWeek()
+        return timetableDao.getTimetableForDay(currentDayOfWeek)
+    }
+
+    // TODO: доделать для работы с экраном профиля
     override suspend fun setProfileScreenInfo(login: String, groupName: String) {}
+    override suspend fun setCurrentPairAndCabinetForWidget() {
+        Log.d("API", "Обновление текущей пары и кабинета")
+        val timetableForToday = getTimetableLocally()
+        timetableForToday.forEach { lesson ->
+            if(checkCurrentTimeInInterval(lesson.pairBeginTime, lesson.pairEndTime)) {
+                Log.d("API", "Найдено совпадение, идет добавление в DataStore")
+                keystore.setCurrentPairInfo(lesson.subjectName, lesson.cabinetNumber)
+            }
+        }
+    }
 }

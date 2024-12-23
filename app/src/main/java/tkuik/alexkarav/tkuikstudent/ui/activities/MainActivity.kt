@@ -9,6 +9,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOut
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -33,6 +34,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
@@ -96,7 +98,7 @@ class MainActivity : ComponentActivity() {
                         mutableIntStateOf(0)
                     }
                     val bottomBarVisible by mainViewModel.showBottomBar.collectAsState(initial = false)
-                    val skipAuth by mainViewModel.skipAuthorization.collectAsState()
+                    val skipAuth by mainViewModel.skipAuthorization.collectAsState(initial = false)
 
                     val onAuthButtonPress: (String, String, Int) -> Unit =
                         { login, password, group ->
@@ -147,9 +149,18 @@ class MainActivity : ComponentActivity() {
                                             }
                                         }
                                     }
+                                    else {
+                                        mainViewModel.setBottomBarVisibility(false)
+                                        navController.navigate("auth") {
+                                            popUpTo("pending") {
+                                                inclusive = true
+                                            }
+                                        }
+                                    }
                                 }
-
-                                CircularProgressIndicator(modifier = Modifier.size(150.dp))
+                                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                                    CircularProgressIndicator(modifier = Modifier.size(150.dp))
+                                }
                             }
 
                             composable("auth") {

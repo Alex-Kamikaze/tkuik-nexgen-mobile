@@ -18,7 +18,7 @@ class MainViewModel @Inject constructor(private val repo: TimetableRepositoryImp
     private val _showBottomBar = MutableStateFlow(false)
     val showBottomBar = _showBottomBar.asStateFlow()
 
-    private val _skipAuthorization = MutableStateFlow(true)
+    private val _skipAuthorization = MutableStateFlow(false)
     val skipAuthorization = _skipAuthorization.asStateFlow()
 
     init {
@@ -26,9 +26,10 @@ class MainViewModel @Inject constructor(private val repo: TimetableRepositoryImp
             Log.d("TKUIK_MAIN", "Main view model passed")
             val token = repo.getAuthToken()
             val group = repo.getUserGroup()
-            val authRequired = token.isNotBlank() && token.isNotEmpty() && group != 0
-            _skipAuthorization.value = authRequired
-            _showBottomBar.value = !authRequired
+            val skipAuth = (token.isNotBlank() || token.isNotEmpty()) && group != 0
+            Log.d("AUTH_INFO", "$token $group $skipAuth")
+            _skipAuthorization.value = skipAuth
+            _showBottomBar.value = skipAuth
             _splashReady.value = true
         }
     }

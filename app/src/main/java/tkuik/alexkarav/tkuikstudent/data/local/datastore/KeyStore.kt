@@ -18,6 +18,8 @@ class KeyStore(private val context: Context) {
         private val _USER_GROUP_ID = intPreferencesKey("group_id")
         private val _USER_LOGIN = stringPreferencesKey("login")
         private val _USER_GROUP_NAME = stringPreferencesKey("group_name")
+        private val _CURRENT_LESSON_KEY = stringPreferencesKey("current_pair")
+        private val _CURRENT_CABINET_KEY = stringPreferencesKey("current_cabinet")
     }
 
     val getAuthToken: Flow<String> = context.dataStore.data.map { settings ->
@@ -25,7 +27,7 @@ class KeyStore(private val context: Context) {
     }
 
     val getGroupId: Flow<Int> = context.dataStore.data.map { settings ->
-        settings[_USER_GROUP_ID] ?: -1
+        settings[_USER_GROUP_ID] ?: 0
     }
 
     suspend fun setAuthToken(token: String) {
@@ -57,6 +59,13 @@ class KeyStore(private val context: Context) {
     suspend fun setUserGroupName(name: String) {
         context.dataStore.edit { settings ->
             settings[_USER_GROUP_NAME] = name
+        }
+    }
+
+    suspend fun setCurrentPairInfo(lessonName: String, cabinet: String) {
+        context.dataStore.edit { settings ->
+            settings[_CURRENT_CABINET_KEY] = cabinet
+            settings[_CURRENT_LESSON_KEY] = cabinet
         }
     }
 }
