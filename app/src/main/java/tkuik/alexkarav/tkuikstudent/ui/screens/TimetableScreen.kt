@@ -2,6 +2,7 @@ package tkuik.alexkarav.tkuikstudent.ui.screens
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -58,7 +59,7 @@ fun TimetableScreen(modifier: Modifier = Modifier, timetableViewModel: Timetable
                     }
                 }
             ) {
-                LazyColumn(modifier = modifier.fillMaxSize().padding(20.dp)) {
+                LazyColumn(modifier = modifier.fillMaxSize().padding(20.dp).imePadding()) {
                     items(timetableItems.size) { lessonIndex ->
                         TimetableElement(
                             pairNum = timetableItems[lessonIndex].pairNumber,

@@ -68,4 +68,12 @@ class KeyStore(private val context: Context) {
             settings[_CURRENT_LESSON_KEY] = cabinet
         }
     }
+
+    val getCurrentPair: Flow<String> = context.dataStore.data.map { settings ->
+        settings[_CURRENT_LESSON_KEY] ?: "Не найдено"
+    }
+
+    val getCurrentCabinet: Flow<String> = context.dataStore.data.map { settings ->
+        settings[_CURRENT_CABINET_KEY] ?: "Не найдено"
+    }
 }

@@ -21,5 +21,6 @@ interface TimetableRepositoryInterface {
     suspend fun getTimetableForDay(dayOfWeek: Int): List<TimetableLocalModel>
 
     suspend fun setProfileScreenInfo(login: String, groupName: String)
-    suspend fun setCurrentPairAndCabinetForWidget(): WidgetInfoModel?
+    suspend fun setCurrentPairAndCabinetForWidget(widgetInfoModel: WidgetInfoModel?)
+    suspend fun getCurrentPairAndCabinetForWidget(): WidgetInfoModel?
 }

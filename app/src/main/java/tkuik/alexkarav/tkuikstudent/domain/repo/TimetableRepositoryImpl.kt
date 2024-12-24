@@ -98,8 +98,11 @@ class TimetableRepositoryImpl @Inject constructor(private val db: TimetableDatab
 
     // TODO: доделать для работы с экраном профиля
     override suspend fun setProfileScreenInfo(login: String, groupName: String) {}
-    override suspend fun setCurrentPairAndCabinetForWidget(): WidgetInfoModel? {
-        Log.d("API", "Обновление текущей пары и кабинета")
+    override suspend fun setCurrentPairAndCabinetForWidget(widgetInfoModel: WidgetInfoModel?) {
+        keystore.setCurrentPairInfo(widgetInfoModel?.currentPair ?: "Не найдено", widgetInfoModel?.currentCabinet ?: "Не найдено")
+    }
+
+    override suspend fun getCurrentPairAndCabinetForWidget(): WidgetInfoModel? {
         val timetableForToday = getTimetableLocally()
         timetableForToday.forEach { lesson ->
             if(checkCurrentTimeInInterval(lesson.pairBeginTime, lesson.pairEndTime)) {

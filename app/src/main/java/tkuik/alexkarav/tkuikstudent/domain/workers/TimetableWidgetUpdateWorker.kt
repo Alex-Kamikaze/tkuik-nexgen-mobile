@@ -22,13 +22,12 @@ class TimetableWidgetUpdateWorker @AssistedInject constructor(
 ): CoroutineWorker(appContext, workerParameters)  {
     override suspend fun doWork(): Result {
         try {
-            val widgetInfo = repo.setCurrentPairAndCabinetForWidget()
-            GlanceAppWidgetManager(context = applicationContext)
-                .getGlanceIds(TimetableWidget::class.java)
+            val widgetInfo = repo.getCurrentPairAndCabinetForWidget()
+            GlanceAppWidgetManager(applicationContext).getGlanceIds(TimetableWidget::class.java)
                 .forEach { glanceId ->
                     updateAppWidgetState(applicationContext, glanceId) { prefs ->
                         prefs[TimetableWidget.currentLessonKey] = widgetInfo?.currentPair ?: "Не найдено"
-                        prefs[TimetableWidget.currentCabinetKey] = widgetInfo?.currentCabinet ?: "Не найдено"
+                        prefs[TimetableWidget.currentCabinetKey] = widgetInfo?.currentCabinet ?: "Не найден"
                     }
                 }
             return Result.success()

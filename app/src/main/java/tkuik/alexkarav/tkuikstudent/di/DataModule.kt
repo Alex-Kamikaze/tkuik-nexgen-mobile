@@ -12,6 +12,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import tkuik.alexkarav.tkuikstudent.data.local.datastore.KeyStore
 import tkuik.alexkarav.tkuikstudent.data.local.db.TimetableDatabase
 import tkuik.alexkarav.tkuikstudent.data.remote.TimetableApi
+import tkuik.alexkarav.tkuikstudent.domain.repo.GlanceWidgetRepo
 import tkuik.alexkarav.tkuikstudent.domain.repo.TimetableRepositoryImpl
 import javax.inject.Singleton
 
@@ -48,4 +49,11 @@ object DataModule {
     fun provideTimetableRepository(db: TimetableDatabase, keystore: KeyStore, api: TimetableApi): TimetableRepositoryImpl {
         return TimetableRepositoryImpl(db, api, keystore)
     }
+
+    @Provides
+    @Singleton
+    fun provideWidgetRepository(@ApplicationContext context: Context, keyStore: KeyStore, timetableRepositoryImpl: TimetableRepositoryImpl): GlanceWidgetRepo {
+        return GlanceWidgetRepo(context, keyStore, timetableRepositoryImpl)
+    }
+
 }

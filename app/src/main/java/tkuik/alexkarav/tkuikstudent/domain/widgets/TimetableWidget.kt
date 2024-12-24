@@ -2,15 +2,12 @@ package tkuik.alexkarav.tkuikstudent.domain.widgets
 
 import android.content.Context
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.unit.dp
-import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.glance.Button
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.ImageProvider
-import androidx.glance.action.Action
 import androidx.glance.action.ActionParameters
 import androidx.glance.action.actionStartActivity
 import androidx.glance.action.clickable
@@ -21,19 +18,16 @@ import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.components.Scaffold
 import androidx.glance.appwidget.components.TitleBar
 import androidx.glance.appwidget.provideContent
+import androidx.glance.appwidget.updateAll
 import androidx.glance.currentState
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Column
 import androidx.glance.layout.fillMaxSize
-import androidx.glance.layout.padding
-import androidx.glance.state.GlanceStateDefinition
-import androidx.glance.state.PreferencesGlanceStateDefinition
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import tkuik.alexkarav.tkuikstudent.R
-import tkuik.alexkarav.tkuikstudent.TimetableApplication
 import tkuik.alexkarav.tkuikstudent.domain.workers.TimetableWidgetUpdateWorker
 import tkuik.alexkarav.tkuikstudent.ui.activities.MainActivity
 
@@ -54,7 +48,6 @@ class TimetableWidget: GlanceAppWidget() {
     fun Content() {
         val currentLesson = currentState(key = currentLessonKey) ?: "Не найдено"
         val currentCabinet = currentState(key = currentCabinetKey) ?: "Не найдено"
-
         GlanceTheme {
             Scaffold(
                 titleBar = { TitleBar(startIcon = ImageProvider(R.drawable.time_icon), title = "Текущая пара", textColor = GlanceTheme.colors.onSurface) },
@@ -64,6 +57,8 @@ class TimetableWidget: GlanceAppWidget() {
                 Column(modifier = GlanceModifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalAlignment = Alignment.CenterVertically) {
                     Text("Текущая пара: $currentLesson", style = TextStyle(color = GlanceTheme.colors.onSurface))
                     Text("Кабинет: $currentCabinet", style = TextStyle(color = GlanceTheme.colors.onSurface))
+
+                    Button("Обновить", onClick = actionRunCallback<UpdateTimetableWidgetAction>())
                 }
             }
         }
@@ -72,13 +67,16 @@ class TimetableWidget: GlanceAppWidget() {
 
 class TimetableWidgetReceiver(override val glanceAppWidget: GlanceAppWidget = TimetableWidget()) : GlanceAppWidgetReceiver()
 
-class UpdateTimetableWidgetAction(): ActionCallback {
+class UpdateTimetableWidgetAction: ActionCallback {
+
     override suspend fun onAction(
         context: Context,
         glanceId: GlanceId,
         parameters: ActionParameters
     ) {
-        TimetableWidget().update(context, glanceId)
+        val updateWorkerRequest = OneTimeWorkRequestBuilder<TimetableWidgetUpdateWorker>().build()
+        WorkManager.getInstance(context).enqueue(updateWorkerRequest)
+        TimetableWidget().updateAll(context)
     }
 
 }
